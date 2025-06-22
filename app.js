@@ -19,8 +19,6 @@ class App{
 
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 500);
     this.camera.position.set(0, 1.6, 0);
-		this.camera.lookAt(0, 1.5, -3);
-
 
     const listener = new THREE.AudioListener();
     this.camera.add(listener); // Needed for 3D sound
@@ -61,13 +59,7 @@ class App{
 
     this.loadingBar = new LoadingBar();
 
-    //this.loadCollege();
-		// Show a red cube for testing
-const testGeo = new THREE.BoxGeometry(1, 1, 1);
-const testMat = new THREE.MeshStandardMaterial({ color: 0xff0055 });
-const testCube = new THREE.Mesh(testGeo, testMat);
-testCube.position.set(0, 1.6, -3);
-this.scene.add(testCube);
+    this.loadCollege();
 
     this.immersive = false;
 
@@ -82,10 +74,11 @@ this.scene.add(testCube);
 
     // 2. Create clickable box
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshStandardMaterial({ color: 0x4CC3D9 });
-const interactiveBox = new THREE.Mesh(geometry, material);
-interactiveBox.position.set(0, 1.5, -3);
-this.scene.add(interactiveBox);
+    const material = new THREE.MeshStandardMaterial({ color: 0x4CC3D9 });
+    const interactiveBox = new THREE.Mesh(geometry, material);
+    interactiveBox.position.set(0, 1.5, -3);
+    interactiveBox.name = "InteractiveBox";
+    this.scene.add(interactiveBox);
 
     // 3. Add ambient sound to the box
     const sound = new THREE.PositionalAudio(listener);
