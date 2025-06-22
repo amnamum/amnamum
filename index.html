@@ -23,8 +23,15 @@
 </head>
 <body>
   <script type="module">
-    import { App } from './app.js';
-    const app = new App();
-  </script>
+  import { App } from './app.js';
+  const app = new App(); <!-- ❌ Don't call it here -->
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    const app = new App(); <!-- ✅ Only this one is needed -->
+    window.app = app;
+  });
+</script>
 </body>
 </html>
