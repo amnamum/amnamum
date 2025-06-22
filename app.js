@@ -12,60 +12,99 @@ import { XRControllerModelFactory } from './libs/three/jsm/XRControllerModelFact
 
 class App{
 	constructor(){
-		const container = document.createElement( 'div' );
-		document.body.appendChild( container );
+    const container = document.createElement('div');
+    document.body.appendChild(container);
 
-		this.assetsPath = './assets/';
-        
-		this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.01, 500 );
-		this.camera.position.set( 0, 1.6, 0 );
-        
-        this.dolly = new THREE.Object3D(  );
-        this.dolly.position.set(0, 0, 10);
-        this.dolly.add( this.camera );
-        this.dummyCam = new THREE.Object3D();
-        this.camera.add( this.dummyCam );
-        
-		this.scene = new THREE.Scene();
-        this.scene.add( this.dolly );
-        
-		const ambient = new THREE.HemisphereLight(0xFFFFFF, 0xAAAAAA, 0.8);
-		this.scene.add(ambient);
+    this.assetsPath = './assets/';
 
-		this.renderer = new THREE.WebGLRenderer({ antialias: true });
-		this.renderer.setPixelRatio( window.devicePixelRatio );
-		this.renderer.setSize( window.innerWidth, window.innerHeight );
-		this.renderer.outputEncoding = THREE.sRGBEncoding;
-		container.appendChild( this.renderer.domElement );
-        this.setEnvironment();
-	
-        window.addEventListener( 'resize', this.resize.bind(this) );
-        
-        this.clock = new THREE.Clock();
-        this.up = new THREE.Vector3(0,1,0);
-        this.origin = new THREE.Vector3();
-        this.workingVec3 = new THREE.Vector3();
-        this.workingQuaternion = new THREE.Quaternion();
-        this.raycaster = new THREE.Raycaster();
-        
-        this.stats = new Stats();
-		container.appendChild( this.stats.dom );
-        
-		this.loadingBar = new LoadingBar();
-		
-		this.loadCollege();
-        
-        this.immersive = false;
-        
-        const self = this;
-        
-        fetch('./college.json')
-            .then(response => response.json())
-            .then(obj =>{
-                self.boardShown = '';
-                self.boardData = obj;
-            });
-	}
+    this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 500);
+    this.camera.position.set(0, 1.6, 0);
+
+    const listener = new THREE.AudioListener();
+    this.camera.add(listener); // Needed for 3D sound
+
+    this.dolly = new THREE.Object3D();
+    this.dolly.position.set(0, 0, 10);
+    this.dolly.add(this.camera);
+    this.dummyCam = new THREE.Object3D();
+    this.camera.add(this.dummyCam);
+
+    this.scene = new THREE.Scene();
+    this.scene.add(this.dolly);
+
+    // 1. Change sky color (scene background)
+    this.scene.background = new THREE.Color('#88c0d0');
+
+    const ambient = new THREE.HemisphereLight(0xFFFFFF, 0xAAAAAA, 0.8);
+    this.scene.add(ambient);
+
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
+    container.appendChild(this.renderer.domElement);
+    this.setEnvironment();
+
+    window.addEventListener('resize', this.resize.bind(this));
+
+    this.clock = new THREE.Clock();
+    this.up = new THREE.Vector3(0, 1, 0);
+    this.origin = new THREE.Vector3();
+    this.workingVec3 = new THREE.Vector3();
+    this.workingQuaternion = new THREE.Quaternion();
+    this.raycaster = new THREE.Raycaster();
+
+    this.stats = new Stats();
+    container.appendChild(this.stats.dom);
+
+    this.loadingBar = new LoadingBar();
+
+    this.loadCollege();
+
+    this.immersive = false;
+
+    const self = this;
+
+    fetch('./college.json')
+        .then(response => response.json())
+        .then(obj => {
+            self.boardShown = '';
+            self.boardData = obj;
+        });
+
+    // 2. Create clickable box
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshStandardMaterial({ color: 0x4CC3D9 });
+    const interactiveBox = new THREE.Mesh(geometry, material);
+    interactiveBox.position.set(0, 1.5, -3);
+    interactiveBox.name = "InteractiveBox";
+    this.scene.add(interactiveBox);
+
+    // 3. Add ambient sound to the box
+    const sound = new THREE.PositionalAudio(listener);
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load('./ambient.mp3', function(buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(true);
+        sound.setRefDistance(5);
+        sound.play();
+    });
+    interactiveBox.add(sound);
+
+    // Box click interaction (raycasting)
+    window.addEventListener('click', (event) => {
+        const mouse = new THREE.Vector2(
+            (event.clientX / window.innerWidth) * 2 - 1,
+            -(event.clientY / window.innerHeight) * 2 + 1
+        );
+        this.raycaster.setFromCamera(mouse, this.camera);
+        const intersects = this.raycaster.intersectObjects([interactiveBox]);
+        if (intersects.length > 0) {
+            const newColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            interactiveBox.material.color.set(newColor);
+        }
+    });
+}
 	
     setEnvironment(){
         const loader = new RGBELoader().setDataType( THREE.UnsignedByteType );
