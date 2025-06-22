@@ -59,7 +59,13 @@ class App{
 
     this.loadingBar = new LoadingBar();
 
-    this.loadCollege();
+    //this.loadCollege();
+		// Show a red cube for testing
+const testGeo = new THREE.BoxGeometry(1, 1, 1);
+const testMat = new THREE.MeshStandardMaterial({ color: 0xff0055 });
+const testCube = new THREE.Mesh(testGeo, testMat);
+testCube.position.set(0, 1.6, -3);
+this.scene.add(testCube);
 
     this.immersive = false;
 
