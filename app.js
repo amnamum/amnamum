@@ -76,7 +76,7 @@ class App{
     const geometry = new THREE.BoxGeometry(2, 2, 2);
     const material = new THREE.MeshStandardMaterial({ color: 0x4CC3D9 });
     const interactiveBox = new THREE.Mesh(geometry, material);
-    interactiveBox.position.set(1.5, 5, 20);
+    interactiveBox.position.set(0, 6, 20);
     interactiveBox.name = "InteractiveBox";
     this.scene.add(interactiveBox);
 
