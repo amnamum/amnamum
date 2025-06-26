@@ -73,10 +73,10 @@ class App{
         });
 
     // 2. Create clickable box
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const geometry = new THREE.BoxGeometry(3, 3, 3);
     const material = new THREE.MeshStandardMaterial({ color: 0x4CC3D9 });
     const interactiveBox = new THREE.Mesh(geometry, material);
-    interactiveBox.position.set(0, 10, 10);
+    interactiveBox.position.set(0, 10, 20);
     interactiveBox.name = "InteractiveBox";
     this.scene.add(interactiveBox);
 
