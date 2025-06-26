@@ -83,7 +83,7 @@ class App{
    // 3. Add ambient sound to the box
 const sound = new THREE.PositionalAudio(listener);
 const audioLoader = new THREE.AudioLoader();
-audioLoader.load('./assests/ambient.mp3', function(buffer) {
+audioLoader.load('./assets/ambient.mp3', function(buffer) {
     sound.setBuffer(buffer);
     sound.setLoop(true);
     sound.setRefDistance(5);
