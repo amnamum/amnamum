@@ -76,14 +76,14 @@ class App{
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshStandardMaterial({ color: 0x4CC3D9 });
     const interactiveBox = new THREE.Mesh(geometry, material);
-    interactiveBox.position.set(0, 1.5, -3);
+    interactiveBox.position.set(0, 1.5, 2.5);
     interactiveBox.name = "InteractiveBox";
     this.scene.add(interactiveBox);
 
    // 3. Add ambient sound to the box
 const sound = new THREE.PositionalAudio(listener);
 const audioLoader = new THREE.AudioLoader();
-audioLoader.load('./ambient.mp3', function(buffer) {
+audioLoader.load('./assests/ambient.mp3', function(buffer) {
     sound.setBuffer(buffer);
     sound.setLoop(true);
     sound.setRefDistance(5);
