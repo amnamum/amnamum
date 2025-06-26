@@ -80,25 +80,30 @@ class App{
     interactiveBox.name = "InteractiveBox";
     this.scene.add(interactiveBox);
 
-   // 3. Add ambient sound to the box
-const sound = new THREE.PositionalAudio(listener);
+   // 3. Play background music (non-positional, global sound)
+const bgSound = new THREE.Audio(listener);
 const audioLoader = new THREE.AudioLoader();
-audioLoader.load('./assets/ambient.mp3', function(buffer) {
-    sound.setBuffer(buffer);
-    sound.setLoop(true);
-    sound.setRefDistance(5);
-    interactiveBox.add(sound);
 
-    // Wait for any user interaction, then play
+audioLoader.load('./assets/ambient.mp3', (buffer) => {
+    console.log("Background audio loaded");
+    bgSound.setBuffer(buffer);
+    bgSound.setLoop(true);
+    bgSound.setVolume(0.5); // You can adjust volume
+    this.scene.add(bgSound);
+
+    // Required: user interaction to start audio (browser policy)
     const startAudio = () => {
-        if (!sound.isPlaying) {
-            sound.play();
+        if (!bgSound.isPlaying) {
+            bgSound.play();
+            console.log("Background music started");
         }
         window.removeEventListener('click', startAudio);
     };
-    window.addEventListener('click', startAudio);
-});
 
+    window.addEventListener('click', startAudio);
+}, undefined, (err) => {
+    console.error("Failed to load background audio", err);
+});
     // Box click interaction (raycasting)
     window.addEventListener('click', (event) => {
         const mouse = new THREE.Vector2(
