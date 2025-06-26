@@ -80,16 +80,24 @@ class App{
     interactiveBox.name = "InteractiveBox";
     this.scene.add(interactiveBox);
 
-    // 3. Add ambient sound to the box
-    const sound = new THREE.PositionalAudio(listener);
-    const audioLoader = new THREE.AudioLoader();
-    audioLoader.load('./assets/ambient.mp3', function(buffer) {
-        sound.setBuffer(buffer);
-        sound.setLoop(true);
-        sound.setRefDistance(5);
-        sound.play();
-    });
+   // 3. Add ambient sound to the box
+const sound = new THREE.PositionalAudio(listener);
+const audioLoader = new THREE.AudioLoader();
+audioLoader.load('./ambient.mp3', function(buffer) {
+    sound.setBuffer(buffer);
+    sound.setLoop(true);
+    sound.setRefDistance(5);
     interactiveBox.add(sound);
+
+    // Wait for any user interaction, then play
+    const startAudio = () => {
+        if (!sound.isPlaying) {
+            sound.play();
+        }
+        window.removeEventListener('click', startAudio);
+    };
+    window.addEventListener('click', startAudio);
+});
 
     // Box click interaction (raycasting)
     window.addEventListener('click', (event) => {
