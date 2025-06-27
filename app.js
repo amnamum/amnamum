@@ -32,7 +32,47 @@ class App{
     this.scene = new THREE.Scene();
     this.scene.add(this.dolly);
 
-    // 1. Create clickable box
+    // 1. Change sky color (scene background)
+    this.scene.background = new THREE.Color('#88c0d0');
+
+    const ambient = new THREE.HemisphereLight(0xFFFFFF, 0xAAAAAA, 0.8);
+    this.scene.add(ambient);
+
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
+    container.appendChild(this.renderer.domElement);
+    this.setEnvironment();
+
+    window.addEventListener('resize', this.resize.bind(this));
+
+    this.clock = new THREE.Clock();
+    this.up = new THREE.Vector3(0, 1, 0);
+    this.origin = new THREE.Vector3();
+    this.workingVec3 = new THREE.Vector3();
+    this.workingQuaternion = new THREE.Quaternion();
+    this.raycaster = new THREE.Raycaster();
+
+    this.stats = new Stats();
+    container.appendChild(this.stats.dom);
+
+    this.loadingBar = new LoadingBar();
+
+    this.loadCollege();
+
+    this.immersive = false;
+
+    const self = this;
+
+    fetch('./college.json')
+        .then(response => response.json())
+        .then(obj => {
+            self.boardShown = '';
+            self.boardData = obj;
+        });
+
+    // 2. Create clickable box
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshStandardMaterial({ color: 0x4CC3D9 });
     const interactiveBox = new THREE.Mesh(geometry, material);
@@ -40,7 +80,7 @@ class App{
     interactiveBox.name = "InteractiveBox";
     this.scene.add(interactiveBox);
 
-   // 2. Play background music (non-positional, global sound)
+   // 3. Play background music (non-positional, global sound)
 const bgSound = new THREE.Audio(listener);
 const audioLoader = new THREE.AudioLoader();
 
