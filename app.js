@@ -55,7 +55,6 @@ class App{
     this.raycaster = new THREE.Raycaster();
 
     this.stats = new Stats();
-    container.appendChild(this.stats.dom);
 
     this.loadingBar = new LoadingBar();
 
